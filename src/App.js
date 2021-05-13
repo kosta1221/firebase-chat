@@ -22,8 +22,8 @@ function App() {
 
 	return (
 		<div className="App">
-			{user ? (
-				<Profile />
+			{user && user ? (
+				<Profile user={user} />
 			) : (
 				<div>
 					<SignIn />
