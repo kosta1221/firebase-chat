@@ -1,33 +1,47 @@
-import React from "react";
+import React, { useState } from "react";
 import firebase from "firebase";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 
 function Profile({ user }) {
-	console.log(user);
-
 	const firestore = firebase.firestore();
-	const postsRef = firestore.collection("posts");
-	// const query = postsRef.get().then((results) => {
-	// 	console.log(results.docs[0].data());
-	// });
+	const messagesRef = firestore.collection("messages");
 
-	const [posts] = useCollectionData(postsRef);
+	const [formInputValue, setFormInputValue] = useState("");
+
+	const [messages] = useCollectionData(
+		messagesRef.where("uid", "==", user.uid).orderBy("createdAt")
+	);
 
 	const handleSignOut = (e) => {
 		firebase.auth().signOut();
 	};
 
+	const handleSendMessage = (e) => {
+		e.preventDefault();
+
+		messagesRef
+			.add({
+				content: formInputValue,
+				createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+				uid: user.uid,
+			})
+			.then((response) => {
+				console.log(response);
+				setFormInputValue("");
+			});
+	};
+
 	return (
 		<div>
 			<h1>Welcome {user && user.displayName}</h1>
-			{posts?.map((post) => {
-				return (
-					<>
-						<h1>{post.title}</h1>
-						<p>{post.content}</p>
-					</>
-				);
+			{messages?.map((message, i) => {
+				return <p key={i}>{message.content}</p>;
 			})}
+
+			<form onSubmit={handleSendMessage}>
+				<input value={formInputValue} onChange={(e) => setFormInputValue(() => e.target.value)} />
+				<button type="submit">Send Message</button>
+			</form>
 			<button onClick={handleSignOut}>Sign Out</button>
 		</div>
 	);
