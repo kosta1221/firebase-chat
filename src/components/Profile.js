@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import firebase from "firebase";
-import { useCollectionData } from "react-firebase-hooks/firestore";
+import { useCollection, useCollectionData } from "react-firebase-hooks/firestore";
 import ChatRoom from "./ChatRoom";
 
 function Profile({ user }) {
 	const firestore = firebase.firestore();
 	const roomsRef = firestore.collection("rooms");
 
+	const [roomIdsSnap] = useCollection(roomsRef.where("creatorId", "==", user.uid));
 	const [rooms] = useCollectionData(roomsRef.where("creatorId", "==", user.uid));
-	console.log(rooms);
+	console.log("room ids: ", roomIdsSnap);
+	console.log("rooms: ", rooms);
 	const [displayedRoom, setDisplayedRoom] = useState(null);
 
 	const handleSignOut = (e) => {
@@ -22,11 +24,11 @@ function Profile({ user }) {
 	return (
 		<div>
 			<h1>Welcome {user && user.displayName}</h1>
-			{rooms?.map((room, i) => {
-				console.log(room);
+			{roomIdsSnap?.docs.map((doc, i) => {
+				console.log(doc);
 				return (
 					<p onClick={handleRoomClick} key={i}>
-						{room.creatorId}
+						{doc.id}
 					</p>
 				);
 			})}

@@ -5,30 +5,34 @@ import { useCollectionData } from "react-firebase-hooks/firestore";
 function ChatRoom({ roomId, user }) {
 	const firestore = firebase.firestore();
 	const messagesRef = firestore.collection("messages");
-	console.log(roomId);
 
-	const [messages, error] = useCollectionData(messagesRef.where("roomId", "==", roomId));
+	const [messages, loading, error] = useCollectionData(messagesRef.where("roomId", "==", roomId));
 	const [formInputValue, setFormInputValue] = useState("");
 
-	console.log(messages);
 	const handleSendMessage = (e) => {
 		e.preventDefault();
 
-		messagesRef
-			.add({
-				content: formInputValue,
-				createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-				uid: user.uid,
-			})
-			.then((response) => {
-				console.log(response);
-				setFormInputValue("");
-			});
+		if (roomId) {
+			messagesRef
+				.add({
+					content: formInputValue,
+					createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+					uid: user.uid,
+					roomId,
+				})
+				.then((response) => {
+					console.log(response);
+					setFormInputValue("");
+				});
+		}
 	};
 
 	if (error) {
-		console.log(messages);
 		return <h1>ERROR!</h1>;
+	}
+
+	if (loading) {
+		return <h1>Loading!</h1>;
 	}
 
 	return (
