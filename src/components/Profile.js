@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import firebase from "firebase";
 import { useCollection, useCollectionData } from "react-firebase-hooks/firestore";
-import ChatRoom from "./ChatRoom";
+import { Link } from "react-router-dom";
 
-function Profile({ user }) {
+function Profile({ user, displayedRoom, setDisplayedRoom }) {
 	const firestore = firebase.firestore();
 	const roomsRef = firestore.collection("rooms");
 
@@ -11,7 +11,6 @@ function Profile({ user }) {
 	const [rooms] = useCollectionData(roomsRef.where("creatorId", "==", user.uid));
 	console.log("room ids: ", roomIdsSnap);
 	console.log("rooms: ", rooms);
-	const [displayedRoom, setDisplayedRoom] = useState(null);
 
 	const handleSignOut = (e) => {
 		firebase.auth().signOut();
@@ -27,12 +26,11 @@ function Profile({ user }) {
 			{roomIdsSnap?.docs.map((doc, i) => {
 				console.log(doc);
 				return (
-					<p onClick={handleRoomClick} key={i}>
-						{doc.id}
-					</p>
+					<Link to={`/room/${doc.id}`} key={i}>
+						<p onClick={handleRoomClick}>{doc.id}</p>
+					</Link>
 				);
 			})}
-			<ChatRoom roomId={displayedRoom} user={user} />
 
 			<button onClick={handleSignOut}>Sign Out</button>
 		</div>

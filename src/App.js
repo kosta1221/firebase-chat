@@ -1,9 +1,13 @@
+import React, { useState } from "react";
 import "./styles/App.css";
 import firebase from "firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Profile from "./components/Profile";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
+
+import { BrowserRouter, Switch, Route } from "react-router-dom";
+import ChatRoom from "./components/ChatRoom";
 
 firebase.initializeApp({
 	apiKey: "AIzaSyB3LayRm8BR6Tp2rVMq9IAteL2uo50NmJ4",
@@ -19,18 +23,29 @@ const auth = firebase.auth();
 
 function App() {
 	const [user] = useAuthState(auth);
+	const [displayedRoom, setDisplayedRoom] = useState(null);
 
 	return (
-		<div className="App">
-			{user && user ? (
-				<Profile user={user} />
-			) : (
-				<div>
-					<SignIn />
-					<SignUp />
-				</div>
-			)}
-		</div>
+		<BrowserRouter>
+			<div className="App">
+				{user && user ? (
+					<Profile user={user} displayedRoom={displayedRoom} setDisplayedRoom={setDisplayedRoom} />
+				) : (
+					<div>
+						<SignIn />
+						<SignUp />
+					</div>
+				)}
+			</div>
+			<Switch>
+				<Route exact path="/rooms" />
+				<Route
+					exact
+					path="/room/:id"
+					render={(props) => <ChatRoom roomId={displayedRoom} user={user} {...props} />}
+				/>
+			</Switch>
+		</BrowserRouter>
 	);
 }
 
