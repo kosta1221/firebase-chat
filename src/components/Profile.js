@@ -16,6 +16,21 @@ function Profile({ user, displayedRoom, setDisplayedRoom }) {
 		firebase.auth().signOut();
 	};
 
+	const handleCreateRoom = (e) => {
+		roomsRef
+			.add({
+				creatorId: user.uid,
+				participants: [user.uid],
+				createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+			})
+			.then((response) => {
+				console.log(response);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	};
+
 	const handleRoomClick = (e) => {
 		setDisplayedRoom(() => e.target.innerText);
 	};
@@ -33,6 +48,7 @@ function Profile({ user, displayedRoom, setDisplayedRoom }) {
 			})}
 
 			<button onClick={handleSignOut}>Sign Out</button>
+			<button onClick={handleCreateRoom}>Create Room</button>
 		</div>
 	);
 }
