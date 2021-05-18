@@ -26,6 +26,7 @@ const auth = firebase.auth();
 function App() {
 	const [user] = useAuthState(auth);
 	const [displayedRoom, setDisplayedRoom] = useState(null);
+	console.log(user);
 
 	return (
 		<BrowserRouter>
