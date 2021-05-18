@@ -8,6 +8,7 @@ import SignUp from "./components/SignUp";
 
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import ChatRoom from "./components/ChatRoom";
+import UserRouter from "./components/UserRouter";
 import LandingPage from "./components/LandingPage";
 
 firebase.initializeApp({
@@ -30,10 +31,12 @@ function App() {
 		<BrowserRouter>
 			<div className="App">
 				<h1>Firechat</h1>
-				<LandingPage user={user} />
+				<UserRouter user={user} />
 
 				<Switch>
+					<Route exact path="/landing" render={(props) => <LandingPage user={user} {...props} />} />
 					<Route exact path="/signin" render={(props) => <SignIn {...props} />} />
+					<Route exact path="/signup" render={(props) => <SignUp {...props} />} />
 					<Route
 						exact
 						path="/rooms"

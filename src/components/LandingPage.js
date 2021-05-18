@@ -1,18 +1,16 @@
-import { useEffect } from "react";
-import { useRouter } from "../hooks/useRouter";
+import { Link } from "react-router-dom";
 
 function LandingPage({ user }) {
-	const router = useRouter();
-	console.log(user);
-	useEffect(() => {
-		if (user) {
-			router.push("/rooms");
-		} else {
-			router.push("/signin");
-		}
-	}, [user]);
-
-	return null;
+	return (
+		<div>
+			<Link to={`/signin`}>
+				<button>Sign In</button>
+			</Link>
+			<Link to={`/signup`}>
+				<button>Sign Up</button>
+			</Link>
+		</div>
+	);
 }
 
 export default LandingPage;

@@ -7,8 +7,8 @@ function Profile({ user, displayedRoom, setDisplayedRoom }) {
 	const firestore = firebase.firestore();
 	const roomsRef = firestore.collection("rooms");
 
-	const [roomIdsSnap] = useCollection(roomsRef.where("creatorId", "==", user.uid));
-	const [rooms] = useCollectionData(roomsRef.where("creatorId", "==", user.uid));
+	const [roomIdsSnap] = useCollection(roomsRef.where("creatorId", "==", user && user.uid));
+	const [rooms] = useCollectionData(roomsRef.where("creatorId", "==", user && user.uid));
 	console.log("room ids: ", roomIdsSnap);
 	console.log("rooms: ", rooms);
 
