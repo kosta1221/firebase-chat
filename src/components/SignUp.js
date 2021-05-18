@@ -3,12 +3,12 @@ import firebase from "firebase";
 
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 
-const auth = firebase.auth();
-
 function SignUp() {
+	const auth = firebase.auth();
+
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [createUserWithEmailAndPassword, user, loading, error] =
+	const [createUserWithEmailAndPassword, , loading, error] =
 		useCreateUserWithEmailAndPassword(auth);
 
 	const handleSignUpWithEmailAndPassword = (e) => {
