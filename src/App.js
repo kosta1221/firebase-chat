@@ -8,6 +8,7 @@ import SignUp from "./components/SignUp";
 
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import ChatRoom from "./components/ChatRoom";
+import LandingPage from "./components/LandingPage";
 
 firebase.initializeApp({
 	apiKey: "AIzaSyB3LayRm8BR6Tp2rVMq9IAteL2uo50NmJ4",
@@ -28,23 +29,30 @@ function App() {
 	return (
 		<BrowserRouter>
 			<div className="App">
-				{user && user ? (
-					<Profile user={user} displayedRoom={displayedRoom} setDisplayedRoom={setDisplayedRoom} />
-				) : (
-					<div>
-						<SignIn />
-						<SignUp />
-					</div>
-				)}
+				<h1>Firechat</h1>
+				<LandingPage user={user} />
+
+				<Switch>
+					<Route exact path="/signin" render={(props) => <SignIn {...props} />} />
+					<Route
+						exact
+						path="/rooms"
+						render={(props) => (
+							<Profile
+								user={user}
+								displayedRoom={displayedRoom}
+								setDisplayedRoom={setDisplayedRoom}
+								{...props}
+							/>
+						)}
+					/>
+					<Route
+						exact
+						path="/room/:id"
+						render={(props) => <ChatRoom roomId={displayedRoom} user={user} {...props} />}
+					/>
+				</Switch>
 			</div>
-			<Switch>
-				<Route exact path="/rooms" />
-				<Route
-					exact
-					path="/room/:id"
-					render={(props) => <ChatRoom roomId={displayedRoom} user={user} {...props} />}
-				/>
-			</Switch>
 		</BrowserRouter>
 	);
 }
