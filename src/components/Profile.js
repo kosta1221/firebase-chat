@@ -20,7 +20,7 @@ function Profile({ user, displayedRoom, setDisplayedRoom }) {
 		roomsRef
 			.add({
 				creatorId: user.uid,
-				participants: [user.uid],
+				participants: [{ uid: user.uid, name: user.displayName || "Anon" }],
 				createdAt: firebase.firestore.FieldValue.serverTimestamp(),
 			})
 			.then((response) => {
@@ -37,7 +37,7 @@ function Profile({ user, displayedRoom, setDisplayedRoom }) {
 
 	return (
 		<div>
-			<h1>Welcome {user && user.displayName}</h1>
+			<h1>Welcome {(user && user.displayName) || "Anon"}</h1>
 			{roomIdsSnap?.docs.map((doc, i) => {
 				console.log(doc);
 				return (

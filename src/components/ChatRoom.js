@@ -1,12 +1,17 @@
 import React, { useState } from "react";
 import firebase from "firebase";
-import { useCollectionData } from "react-firebase-hooks/firestore";
+import { useCollectionData, useDocumentData } from "react-firebase-hooks/firestore";
 
 function ChatRoom({ roomId, user }) {
 	const firestore = firebase.firestore();
 	const messagesRef = firestore.collection("messages");
+	const roomsRef = firestore.collection("rooms");
 
-	const [messages, loading, error] = useCollectionData(messagesRef.where("roomId", "==", roomId));
+	const [room, roomLoading, roomError] = useDocumentData(firestore.doc(`rooms/${roomId}`));
+
+	const [messages, messagesLoading, messagesError] = useCollectionData(
+		messagesRef.where("roomId", "==", roomId)
+	);
 	const [formInputValue, setFormInputValue] = useState("");
 
 	const handleSendMessage = (e) => {
@@ -27,18 +32,39 @@ function ChatRoom({ roomId, user }) {
 		}
 	};
 
-	if (error) {
+	if (messagesError || roomError) {
 		return <h1>ERROR!</h1>;
 	}
 
-	if (loading) {
+	if (messagesLoading || roomLoading) {
 		return <h1>Loading!</h1>;
+	}
+
+	if (room) {
+		const foundUser = room.participants.find((participant) => participant.uid === user.uid);
+		if (!foundUser) {
+			roomsRef
+				.doc(roomId)
+				.update({
+					participants: [...room.participants, { uid: user.uid, name: user.displayName || "Anon" }],
+				})
+				.then((response) => {
+					console.log(response);
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		}
 	}
 
 	return (
 		<div>
 			{messages?.map((message, i) => {
-				return <p key={i}>{message.content}</p>;
+				const foundUser = room?.participants.find((participant) => participant.uid === message.uid);
+				if (foundUser) {
+					return <p key={i}>{`${foundUser.name}: ${message.content}`}</p>;
+				}
+				return null;
 			})}
 
 			<form onSubmit={handleSendMessage}>
