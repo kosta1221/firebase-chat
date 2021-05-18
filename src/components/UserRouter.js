@@ -1,12 +1,23 @@
 import { useEffect } from "react";
 import { useRouter } from "../hooks/useRouter";
 
-function UserRouter({ user }) {
+function UserRouter({ user, inviteUrl, setInviteUrl, setDisplayedRoom }) {
 	const router = useRouter();
 
 	useEffect(() => {
+		if (router.pathname.includes("/room/")) {
+			setInviteUrl(() => router.pathname);
+		}
+	}, []);
+
+	useEffect(() => {
 		if (user) {
-			router.push("/rooms");
+			if (inviteUrl) {
+				setDisplayedRoom(() => inviteUrl.slice(6));
+				router.push(inviteUrl);
+			} else {
+				router.push("/rooms");
+			}
 		} else {
 			router.push("/landing");
 		}

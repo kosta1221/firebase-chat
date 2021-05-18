@@ -26,13 +26,20 @@ const auth = firebase.auth();
 function App() {
 	const [user] = useAuthState(auth);
 	const [displayedRoom, setDisplayedRoom] = useState(null);
+	const [inviteUrl, setInviteUrl] = useState("");
 	console.log(user);
+	console.log("invite URL: ", inviteUrl);
 
 	return (
 		<BrowserRouter>
 			<div className="App">
 				<h1>Firechat</h1>
-				<UserRouter user={user} />
+				<UserRouter
+					user={user}
+					inviteUrl={inviteUrl}
+					setInviteUrl={setInviteUrl}
+					setDisplayedRoom={setDisplayedRoom}
+				/>
 
 				<Switch>
 					<Route exact path="/landing" render={(props) => <LandingPage user={user} {...props} />} />
